@@ -6,6 +6,7 @@
 #include "Classes.h"
 
 std::vector<Basic_Logic_Components> basic_logic_components_list;
+std::vector<Connection_Wires> cable_list;
 
 int main()
 {
@@ -35,6 +36,12 @@ int main()
     edit.setPosition(sf::Vector2f(1050, 2));
     connect.setPosition(sf::Vector2f(1100, 2));
     trash.setPosition(sf::Vector2f(1150, 2));
+    sf::Texture button_t;
+    sf::Sprite button;
+    button_t.loadFromFile("Assets/button.png");
+    button.setTexture(button_t);
+    button.setScale(sf::Vector2f(0.15, 0.15));
+    button.setPosition(sf::Vector2f(200, 200));
 
 
     //window.setFramerateLimit(100);
@@ -42,9 +49,14 @@ int main()
     AND y;
     XNOR e;
     Basic_Logic_Components* z{};
-    bool move_mode = true;
-    bool connect_mode = true;
+    Connection_Wires* wire{};
+    //Connection_Wires r;
+    //cable_list.push_back(r);
+    bool tough_mode = true;
+    bool move_mode = false;
+    bool connect_mode = false;
     bool move_active = false;
+    bool connect_active = false;
     x.create(10, 10);
     basic_logic_components_list.push_back(x);
     y.create(500, 500);
@@ -65,9 +77,9 @@ int main()
                 window.close();
             if (event.type == sf::Event::MouseButtonPressed)
             {
-                if (move_mode)
+                for (int i = 0; i < basic_logic_components_list.size(); i++)
                 {
-                    for (int i = 0; i < basic_logic_components_list.size(); i++)
+                    if (move_mode)
                     {
                         if (basic_logic_components_list[i].on_click(mouse_x, mouse_y))
                         {
@@ -76,26 +88,76 @@ int main()
                             i = basic_logic_components_list.size();
                         }
                     }
+                    else if (connect_mode)
+                    {
+                        if (basic_logic_components_list[i].output_on_click(mouse_x, mouse_y, &cable_list))
+                        {
+                            connect_active = true;
+                            wire = &cable_list[cable_list.size() - 1];
+                            i = basic_logic_components_list.size();
+                        }
+                    }
+                    
+                }
+                if (mouse_x > 1000 && mouse_x < 1035 && mouse_y < 35)
+                {
+                    tough_mode = true;
+                    move_mode = false;
+                    connect_mode = false;
+                }
+                else if (mouse_x > 1050 && mouse_x < 1085 && mouse_y < 35)
+                {
+                    tough_mode = false;
+                    move_mode = true;
+                    connect_mode = false;
+                }
+                else if (mouse_x > 1100 && mouse_x < 1135 && mouse_y < 35)
+                {
+                    tough_mode = false;
+                    move_mode = false;
+                    connect_mode = true;
                 }
 
             }
             if (event.type == sf::Event::MouseButtonReleased)
             {
                 move_active = false;
+                connect_active = false;
             }
         }
         if (move_active)
         {
             z->move(mouse_x, mouse_y);
         }
-
         window.clear();
         window.draw(background);
+        if (connect_active)
+        {
+            sf::VertexArray lines(sf::LinesStrip, 2);
+            lines[0].position = sf::Vector2f(wire->x_in_pos, wire->y_in_pos);
+            lines[1].position = sf::Vector2f(mouse_x, mouse_y);
+            if (!wire->on)
+            {
+                lines[0].color = sf::Color::Color(255, 255, 255, 100);
+                lines[1].color = sf::Color::Color(255, 255, 255, 100);
+            }
+            else
+            {
+                lines[0].color = sf::Color::Green;
+                lines[1].color = sf::Color::Green;
+            }
+
+            window.draw(lines);
+        }
+
+        
+        
         window.draw(header);
         window.draw(touch);
         window.draw(edit);
         window.draw(connect);
         window.draw(trash);
+        window.draw(button);
         for (int i = 0; i < basic_logic_components_list.size(); i++)
         {
             basic_logic_components_list[i].draw(&window);

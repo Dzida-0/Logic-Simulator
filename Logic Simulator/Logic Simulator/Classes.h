@@ -1,13 +1,21 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+class Connection_Wires;
+
 class Basic_Logic_Components {
 public:
+    Basic_Logic_Components();
+    
+    std::vector<Connection_Wires>* output_list;
     int x_pos = 0;
     int y_pos = 0;
     int width = 200;
     int height = 200;
     float scale = 0.5;
+    bool input1_active = false;
+    bool input2_active = false;
+    bool output_active = false;
     std::string png_name = "";
     sf::Sprite sprite;
     sf::Texture texture;
@@ -18,49 +26,51 @@ public:
     void create(int x, int y);
     void move(int x, int y);
     bool on_click(int x, int y);
+    void input1(bool active);
+    void input2(bool active);
+    bool output_on_click(int x, int y, std::vector<Connection_Wires>* vector);
     void draw(sf::RenderWindow* window);
+    void output();
 };
 
 class OR : public Basic_Logic_Components {
 public:
     OR(); 
-    void a();
+    void output();
 };
 
 class AND : public Basic_Logic_Components {
 public:
     AND();
-    void a();
+    void output();
 };
 
 class NOR : public Basic_Logic_Components {
 public:
     NOR();
-    void a();
+    void output();
 };
 
 class NAND : public Basic_Logic_Components {
 public:
     NAND();
-    void a();
+    void output();
 };
 
 class XOR : public Basic_Logic_Components {
 public:
     XOR();
-    void a();
+    void output();
 };
 
 class XNOR : public Basic_Logic_Components {
 public:
     XNOR();
-    void a();
+    void output();
 };
 
-
 class Connection_Wires {
-
-    Basic_Logic_Components* in{};
+public:
     Basic_Logic_Components* out{};
     int x_in_pos = 0;
     int y_in_pos = 0;
@@ -69,6 +79,9 @@ class Connection_Wires {
     bool on = false;
     bool straight_line = false;
 
-    void is_on();
+    void input(bool active);
+    void input_move(int x, int y);
+    void output_created();
+    void output();
 };
 
