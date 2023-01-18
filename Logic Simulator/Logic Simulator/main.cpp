@@ -44,7 +44,7 @@ int main()
     button.setPosition(sf::Vector2f(200, 200));
 
 
-    //window.setFramerateLimit(100);
+    window.setFramerateLimit(50);
     OR x;
     AND y;
     XNOR e;
@@ -64,6 +64,11 @@ int main()
     e.create(30, 30);
     basic_logic_components_list.push_back(e);
     sf::Mouse mouse;
+    for (int i = 0; i < basic_logic_components_list.size(); i++)
+    {
+        z = &basic_logic_components_list[i];
+        
+    }
     int mouse_x = mouse.getPosition().x;
     int mouse_y = mouse.getPosition().y;
     while (window.isOpen())
@@ -122,6 +127,40 @@ int main()
             if (event.type == sf::Event::MouseButtonReleased)
             {
                 move_active = false;
+                if (connect_active)
+                {
+                    for (int i = 0; i < basic_logic_components_list.size(); i++)
+                    {
+                        if (basic_logic_components_list[i].input1_on_click(mouse_x, mouse_y) && !basic_logic_components_list[i].input1_connect)
+                        {
+                            wire->x_out_pos = mouse_x;
+                            wire->y_out_pos = mouse_y;
+                            wire->out = &basic_logic_components_list[i];
+                            basic_logic_components_list[i].input1_active = wire->on;
+                            basic_logic_components_list[i].input1_connect = true;
+                            basic_logic_components_list[i].output();
+                            connect_active = false;
+                            std::cout << "1"<< std::endl;
+                        }
+                        else  if (basic_logic_components_list[i].input2_on_click(mouse_x, mouse_y) && !basic_logic_components_list[i].input2_connect)
+                        {
+                            wire->x_out_pos = mouse_x;
+                            wire->y_out_pos = mouse_y;
+                            wire->out = &basic_logic_components_list[i];
+                            basic_logic_components_list[i].input2_active = wire->on;
+                            basic_logic_components_list[i].input2_connect = true;
+                            basic_logic_components_list[i].output();
+                            connect_active = false;
+                            std::cout << "2" << std::endl;
+                        }
+                 
+                    }
+                    if (connect_active)
+                    {
+                        wire = {};
+                        cable_list.pop_back();
+                    }
+                }
                 connect_active = false;
             }
         }
@@ -133,25 +172,35 @@ int main()
         window.draw(background);
         if (connect_active)
         {
-            sf::VertexArray lines(sf::LinesStrip, 2);
-            lines[0].position = sf::Vector2f(wire->x_in_pos, wire->y_in_pos);
-            lines[1].position = sf::Vector2f(mouse_x, mouse_y);
+            sf::RectangleShape rec;
+            rec.setPosition(sf::Vector2f(wire->x_in_pos, wire->y_in_pos));
+            rec.setSize(sf::Vector2f(sqrt(pow(wire->x_in_pos - mouse_x, 2) + pow(wire->y_in_pos - mouse_y, 2)),5));
             if (!wire->on)
-            {
-                lines[0].color = sf::Color::Color(255, 255, 255, 100);
-                lines[1].color = sf::Color::Color(255, 255, 255, 100);
-            }
+                rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
             else
+                rec.setFillColor(sf::Color::Green);
+            if (mouse_x - wire->x_in_pos != 0)
             {
-                lines[0].color = sf::Color::Green;
-                lines[1].color = sf::Color::Green;
+                if (mouse_x - wire->x_in_pos > 0)
+                rec.setRotation(atan(float(mouse_y - wire->y_in_pos) / float(mouse_x - wire->x_in_pos)) * 180 / 3.1415);
+                else 
+                    rec.setRotation(180 + atan(float(mouse_y - wire->y_in_pos) / float(mouse_x - wire->x_in_pos)) * 180 / 3.1415);
             }
-
-            window.draw(lines);
+            for (int i = 0; i < cable_list.size() - 1; i++)
+            {
+                cable_list[i].draw_cable(&window);
+            }
+            window.draw(rec);
+        }
+        else
+        {
+            for (int i = 0; i < cable_list.size(); i++)
+                {
+                    cable_list[i].draw_cable(&window);
+                }
         }
 
-        
-        
+
         window.draw(header);
         window.draw(touch);
         window.draw(edit);

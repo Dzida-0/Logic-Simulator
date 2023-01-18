@@ -1,6 +1,7 @@
 #pragma once
 #include "Classes.h"
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 Basic_Logic_Components::Basic_Logic_Components()
 {
@@ -44,6 +45,17 @@ bool Basic_Logic_Components::on_click(int x, int y)
     return bool(x_pos < x&& x < x_pos + width * scale && y_pos < y&& y < y_pos + height * scale);
 }
 
+bool Basic_Logic_Components::input1_on_click(int x, int y)
+{
+    return bool(sqrt(pow((x_pos - width / 3 * scale) - x, 2) + pow((y_pos + height / 5 * scale) - y, 2)) <= 3*15.0f * scale);
+}
+
+bool Basic_Logic_Components::input2_on_click(int x, int y)
+{
+    return bool(sqrt(pow((x_pos - width / 3 * scale) - x, 2) + pow((y_pos + height * 2 / 3 * scale) - y, 2)) < 3* 15.0f * scale);
+}
+
+
 bool Basic_Logic_Components::output_on_click(int x, int y, std::vector<Connection_Wires>* vector)
 {
     if (x_pos < x && x < x_pos + width * scale && y_pos < y && y < y_pos + height * scale)
@@ -68,12 +80,20 @@ void Basic_Logic_Components::draw(sf::RenderWindow* window)
 
 void Basic_Logic_Components::output()
 {
-
+    output_active = logic_value_tab[input1_active][input2_active];
+    if (output_active)
+        out.setFillColor(sf::Color::Green);
+    else
+        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
 }
 
 OR::OR()
 {
     png_name = "Assets/OR.png";
+    logic_value_tab[1][1] = true;
+    logic_value_tab[0][1] = true;
+    logic_value_tab[1][0] = true;
+    logic_value_tab[0][0] = false;
 }
 
 void OR::output()
@@ -87,6 +107,10 @@ void OR::output()
 AND::AND()
 {
     png_name = "Assets/AND.png";
+    logic_value_tab[1][1] = true;
+    logic_value_tab[0][1] = false;
+    logic_value_tab[1][0] = false;
+    logic_value_tab[0][0] = false;
 }
 
 void AND::output()
@@ -102,6 +126,10 @@ NOR::NOR()
     png_name = "Assets/NOR.png";
     output_active = true;
     output();
+    logic_value_tab[1][1] = false;
+    logic_value_tab[0][1] = false;
+    logic_value_tab[1][0] = false;
+    logic_value_tab[0][0] = true;
 }
 
 void NOR::output()
@@ -116,6 +144,10 @@ NAND::NAND()
 {
     png_name = "Assets/NAND.png";
     output_active = true;
+    logic_value_tab[1][1] = false;
+    logic_value_tab[0][1] = true;
+    logic_value_tab[1][0] = true;
+    logic_value_tab[0][0] = true;
     output();
 }
 
@@ -130,6 +162,10 @@ void NAND::output()
 XOR::XOR()
 {
     png_name = "Assets/XOR.png";
+    logic_value_tab[1][1] = false;
+    logic_value_tab[0][1] = true;
+    logic_value_tab[1][0] = true;
+    logic_value_tab[0][0] = false;
 }
 
 void XOR::output()
@@ -144,7 +180,12 @@ XNOR::XNOR()
 {
     png_name = "Assets/XNOR.png";
     output_active = true;
+    logic_value_tab[1][1] = true;
+    logic_value_tab[0][1] = false;
+    logic_value_tab[1][0] = false;
+    logic_value_tab[0][0] = true;
     output();
+
 }
 
 void XNOR::output()
@@ -153,17 +194,19 @@ void XNOR::output()
         out.setFillColor(sf::Color::Green);
     else
         out.setFillColor(sf::Color::Color(255, 255, 255, 100));
+    
 }
 
 void Connection_Wires::input(bool active)
 {
     on = active;
+    if (connected)
+        output_created();
 }
 
 void Connection_Wires::output_created()
 {
-    out->output_active = on;
-    out->output();
+    
 }
 
 void Connection_Wires::input_move(int x, int y) 
@@ -174,5 +217,25 @@ void Connection_Wires::input_move(int x, int y)
 
 void Connection_Wires::output()
 {
+    out->output_active = on;
+    out->output();
+}
 
+void Connection_Wires::draw_cable(sf::RenderWindow* window)
+{
+    sf::RectangleShape rec;
+    rec.setPosition(sf::Vector2f(x_in_pos,y_in_pos));
+    rec.setSize(sf::Vector2f(sqrt(pow(x_in_pos - x_out_pos, 2) + pow(y_in_pos - y_out_pos, 2)), 5));
+    if (!on)
+        rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
+    else
+        rec.setFillColor(sf::Color::Green);
+    if (x_out_pos - x_in_pos != 0)
+    {
+        if (x_out_pos - x_in_pos > 0)
+            rec.setRotation(atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
+        else
+            rec.setRotation(180 + atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
+    }
+    window->draw(rec);
 }
