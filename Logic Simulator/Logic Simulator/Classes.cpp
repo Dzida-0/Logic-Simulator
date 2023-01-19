@@ -58,11 +58,11 @@ bool Basic_Logic_Components::input2_on_click(int x, int y)
 
 bool Basic_Logic_Components::output_on_click(int x, int y, std::vector<Connection_Wires>* vector)
 {
-    if (x_pos < x && x < x_pos + width * scale && y_pos < y && y < y_pos + height * scale)
+    if (sqrt(pow((x_pos + width * 1.2 * scale) - x, 2) + pow((y_pos + height * 2 / 5 * scale) - y, 2)) <= 3 * 15.0f * scale)
     {
        Connection_Wires wire;
-        wire.x_in_pos = x_pos + width * 1.2 * scale;
-        wire.y_in_pos = y_pos + height * 2 / 5 * scale;
+        wire.x_in_pos = x_pos + width * 1.2 * scale + 15.0f * scale / 2;
+        wire.y_in_pos = y_pos + height * 2 / 5 * scale + 15.0f * scale / 2;
         wire.input(output_active);
         vector->push_back(wire);
         return true;
@@ -85,6 +85,21 @@ void Basic_Logic_Components::output()
         out.setFillColor(sf::Color::Green);
     else
         out.setFillColor(sf::Color::Color(255, 255, 255, 100));
+
+    if (input1_active)
+        in_1.setFillColor(sf::Color::Green);
+    else
+        in_1.setFillColor(sf::Color::Color(255, 255, 255, 100));
+
+    if (input2_active)
+        in_2.setFillColor(sf::Color::Green);
+    else
+        in_2.setFillColor(sf::Color::Color(255, 255, 255, 100));
+    for (int i = 0; i < output_list.size(); i++)
+    {
+        output_list[i]->on = output_active;
+        output_list[i]->output();
+    }
 }
 
 OR::OR()
@@ -96,14 +111,6 @@ OR::OR()
     logic_value_tab[0][0] = false;
 }
 
-void OR::output()
-{
-    if (output_active)
-        out.setFillColor(sf::Color::Green);
-    else 
-        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
-}
-
 AND::AND()
 {
     png_name = "Assets/AND.png";
@@ -113,31 +120,15 @@ AND::AND()
     logic_value_tab[0][0] = false;
 }
 
-void AND::output()
-{
-    if (output_active)
-        out.setFillColor(sf::Color::Green);
-    else
-        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
-}
-
 NOR::NOR()
 {
     png_name = "Assets/NOR.png";
     output_active = true;
-    output();
     logic_value_tab[1][1] = false;
     logic_value_tab[0][1] = false;
     logic_value_tab[1][0] = false;
     logic_value_tab[0][0] = true;
-}
-
-void NOR::output()
-{
-    if (output_active)
-        out.setFillColor(sf::Color::Green);
-    else
-        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
+    output();
 }
 
 NAND::NAND()
@@ -151,14 +142,6 @@ NAND::NAND()
     output();
 }
 
-void NAND::output()
-{
-    if (output_active)
-        out.setFillColor(sf::Color::Green);
-    else
-        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
-}
-
 XOR::XOR()
 {
     png_name = "Assets/XOR.png";
@@ -166,14 +149,6 @@ XOR::XOR()
     logic_value_tab[0][1] = true;
     logic_value_tab[1][0] = true;
     logic_value_tab[0][0] = false;
-}
-
-void XOR::output()
-{
-    if (output_active)
-        out.setFillColor(sf::Color::Green);
-    else
-        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
 }
 
 XNOR::XNOR()
@@ -186,15 +161,6 @@ XNOR::XNOR()
     logic_value_tab[0][0] = true;
     output();
 
-}
-
-void XNOR::output()
-{
-    if (output_active)
-        out.setFillColor(sf::Color::Green);
-    else
-        out.setFillColor(sf::Color::Color(255, 255, 255, 100));
-    
 }
 
 void Connection_Wires::input(bool active)
@@ -223,19 +189,37 @@ void Connection_Wires::output()
 
 void Connection_Wires::draw_cable(sf::RenderWindow* window)
 {
-    sf::RectangleShape rec;
-    rec.setPosition(sf::Vector2f(x_in_pos,y_in_pos));
-    rec.setSize(sf::Vector2f(sqrt(pow(x_in_pos - x_out_pos, 2) + pow(y_in_pos - y_out_pos, 2)), 5));
-    if (!on)
-        rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
-    else
-        rec.setFillColor(sf::Color::Green);
-    if (x_out_pos - x_in_pos != 0)
+    if (!straight_line)
     {
-        if (x_out_pos - x_in_pos > 0)
-            rec.setRotation(atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
+        sf::RectangleShape rec;
+        rec.setPosition(sf::Vector2f(x_in_pos, y_in_pos));
+        rec.setSize(sf::Vector2f(sqrt(pow(x_in_pos - x_out_pos, 2) + pow(y_in_pos - y_out_pos, 2)), 5));
+        if (!on)
+            rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
         else
-            rec.setRotation(180 + atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
+            rec.setFillColor(sf::Color::Green);
+        if (x_out_pos - x_in_pos != 0)
+        {
+            if (x_out_pos - x_in_pos > 0)
+                rec.setRotation(atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
+            else
+                rec.setRotation(180 + atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
+        }
+        else
+        {
+            if (y_in_pos > y_out_pos)
+                rec.rotate(-90);
+            else
+                rec.rotate(90);
+        }
+        window->draw(rec);
     }
-    window->draw(rec);
+    else
+    {
+        sf::RectangleShape rec[3];
+        if (abs(x_in_pos - x_out_pos) > abs(y_in_pos - y_out_pos))
+        {
+
+        }
+    }
 }

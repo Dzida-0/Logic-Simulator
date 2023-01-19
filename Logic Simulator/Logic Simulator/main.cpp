@@ -48,13 +48,12 @@ int main()
     OR x;
     AND y;
     XNOR e;
-    Basic_Logic_Components* z{};
+    Basic_Logic_Components* logic_component{};
     Connection_Wires* wire{};
-    //Connection_Wires r;
-    //cable_list.push_back(r);
     bool tough_mode = true;
     bool move_mode = false;
     bool connect_mode = false;
+    bool trash_mode = false;
     bool move_active = false;
     bool connect_active = false;
     x.create(10, 10);
@@ -66,7 +65,7 @@ int main()
     sf::Mouse mouse;
     for (int i = 0; i < basic_logic_components_list.size(); i++)
     {
-        z = &basic_logic_components_list[i];
+        logic_component = &basic_logic_components_list[i];
         
     }
     int mouse_x = mouse.getPosition().x;
@@ -88,7 +87,7 @@ int main()
                     {
                         if (basic_logic_components_list[i].on_click(mouse_x, mouse_y))
                         {
-                            z = &basic_logic_components_list[i];
+                            logic_component = &basic_logic_components_list[i];
                             move_active = true;
                             i = basic_logic_components_list.size();
                         }
@@ -109,18 +108,28 @@ int main()
                     tough_mode = true;
                     move_mode = false;
                     connect_mode = false;
+                    trash_mode = false;
                 }
                 else if (mouse_x > 1050 && mouse_x < 1085 && mouse_y < 35)
                 {
                     tough_mode = false;
                     move_mode = true;
                     connect_mode = false;
+                    trash_mode = false;
                 }
                 else if (mouse_x > 1100 && mouse_x < 1135 && mouse_y < 35)
                 {
                     tough_mode = false;
                     move_mode = false;
                     connect_mode = true;
+                    trash_mode = false;
+                }
+                else if (mouse_x > 1150 && mouse_x < 1185 && mouse_y < 35)
+                {
+                    tough_mode = false;
+                    move_mode = false;
+                    connect_mode = false;
+                    trash_mode = true;
                 }
 
             }
@@ -139,8 +148,8 @@ int main()
                             basic_logic_components_list[i].input1_active = wire->on;
                             basic_logic_components_list[i].input1_connect = true;
                             basic_logic_components_list[i].output();
+                            basic_logic_components_list[i].output_list.push_back(wire);
                             connect_active = false;
-                            std::cout << "1"<< std::endl;
                         }
                         else  if (basic_logic_components_list[i].input2_on_click(mouse_x, mouse_y) && !basic_logic_components_list[i].input2_connect)
                         {
@@ -150,8 +159,8 @@ int main()
                             basic_logic_components_list[i].input2_active = wire->on;
                             basic_logic_components_list[i].input2_connect = true;
                             basic_logic_components_list[i].output();
+                            basic_logic_components_list[i].output_list.push_back(wire);
                             connect_active = false;
-                            std::cout << "2" << std::endl;
                         }
                  
                     }
@@ -166,7 +175,7 @@ int main()
         }
         if (move_active)
         {
-            z->move(mouse_x, mouse_y);
+            logic_component->move(mouse_x, mouse_y);
         }
         window.clear();
         window.draw(background);
@@ -185,6 +194,13 @@ int main()
                 rec.setRotation(atan(float(mouse_y - wire->y_in_pos) / float(mouse_x - wire->x_in_pos)) * 180 / 3.1415);
                 else 
                     rec.setRotation(180 + atan(float(mouse_y - wire->y_in_pos) / float(mouse_x - wire->x_in_pos)) * 180 / 3.1415);
+            }
+            else
+            {
+                if (wire->y_in_pos > mouse_y)
+                    rec.rotate(-90);
+                else
+                    rec.rotate(90);
             }
             for (int i = 0; i < cable_list.size() - 1; i++)
             {
