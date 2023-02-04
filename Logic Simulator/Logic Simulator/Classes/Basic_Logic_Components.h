@@ -1,12 +1,12 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-
-class Connection_Wires;
+#include <vector>
+#include "SFML/Graphics.hpp"
+#include "Connection_Wires.h"
 
 class Basic_Logic_Components {
 public:
     Basic_Logic_Components();
-    
+
     std::vector<Connection_Wires*> output_list;
     int x_pos = 0;
     int y_pos = 0;
@@ -21,6 +21,7 @@ public:
     bool output_active = false;
     bool logic_value_tab[2][2];
 
+    bool action_in_sequence = false;
 
     std::string png_name = "";
     sf::Sprite sprite;
@@ -28,7 +29,7 @@ public:
     sf::CircleShape in_1;
     sf::CircleShape in_2;
     sf::CircleShape out;
-    
+
     void create(int x, int y);
     void move(int x, int y);
     bool on_click(int x, int y);
@@ -39,53 +40,3 @@ public:
     void output();
 
 };
-
-class OR : public Basic_Logic_Components {
-public:
-    OR(); 
-};
-
-class AND : public Basic_Logic_Components {
-public:
-    AND();
-};
-
-class NOR : public Basic_Logic_Components {
-public:
-    NOR();
-};
-
-class NAND : public Basic_Logic_Components {
-public:
-    NAND();
-};
-
-class XOR : public Basic_Logic_Components {
-public:
-    XOR();
-};
-
-class XNOR : public Basic_Logic_Components {
-public:
-    XNOR();
-};
-
-class Connection_Wires {
-public:
-    Basic_Logic_Components* out{};
-    int x_in_pos = 0;
-    int y_in_pos = 0;
-    int x_out_pos = 0;
-    int y_out_pos = 0;
-
-    bool on = false;
-    bool straight_line = false;
-    bool connected = false;
-
-    void input(bool active);
-    void input_move(int x, int y);
-    void output_created();
-    void output();
-    void draw_cable(sf::RenderWindow * window);
-};
-

@@ -1,235 +1,253 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+
+#include "Classes/Background.h"
+#include "Classes/Basic_Logic_Components.h"
+#include "Classes/Basic_Logic_Gates.h"
+#include "Classes/Connection_Wires.h"
+#include "Classes/Header.h"
 #include <iostream>
 
-#include "Classes.h"
+int start();
+std::string new_project();
 
-std::vector<Basic_Logic_Components> basic_logic_components_list;
-std::vector<Connection_Wires> cable_list;
+void simulation(std::string file_name);
+void error(std::string err);
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode().getDesktopMode(), "Logic Simulator", sf::Style::None);
-    //window.setIcon();
-    sf::RectangleShape background;
-    background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
-    background.setFillColor(sf::Color::Color(100, 100, 100, 255));
-    sf::RectangleShape header;
-    header.setSize(sf::Vector2f(window.getSize().x, 40));
-    header.setFillColor(sf::Color::Color(255,255,255, 255));
-    sf::Texture touch_t, edit_t, connect_t, trash_t;
-    sf::Sprite touch, edit, connect, trash;
-    touch_t.loadFromFile("Assets/touch.png");
-    edit_t.loadFromFile("Assets/edit.png");
-    connect_t.loadFromFile("Assets/connect.png");
-    trash_t.loadFromFile("Assets/trash.png");
-    touch.setTexture(touch_t);
-    edit.setTexture(edit_t);
-    connect.setTexture(connect_t);
-    trash.setTexture(trash_t);
-    touch.setScale(sf::Vector2f(0.035,0.035));
-    edit.setScale(sf::Vector2f(0.035, 0.035));
-    connect.setScale(sf::Vector2f(0.035, 0.035));
-    trash.setScale(sf::Vector2f(0.035, 0.035));
-    touch.setPosition(sf::Vector2f(1000, 2));
-    edit.setPosition(sf::Vector2f(1050, 2));
-    connect.setPosition(sf::Vector2f(1100, 2));
-    trash.setPosition(sf::Vector2f(1150, 2));
-    sf::Texture button_t;
-    sf::Sprite button;
-    button_t.loadFromFile("Assets/button.png");
-    button.setTexture(button_t);
-    button.setScale(sf::Vector2f(0.15, 0.15));
-    button.setPosition(sf::Vector2f(200, 200));
+    std::string name;
+    int start_action = start();
+    if (start_action == 1)
+        name = new_project();
+    if (name == "")
+        main();
 
+    simulation(name);
+    main();
 
-    window.setFramerateLimit(50);
-    OR x;
-    AND y;
-    XNOR e;
-    Basic_Logic_Components* logic_component{};
-    Connection_Wires* wire{};
-    bool tough_mode = true;
-    bool move_mode = false;
-    bool connect_mode = false;
-    bool trash_mode = false;
-    bool move_active = false;
-    bool connect_active = false;
-    x.create(10, 10);
-    basic_logic_components_list.push_back(x);
-    y.create(500, 500);
-    basic_logic_components_list.push_back(y);
-    e.create(30, 30);
-    basic_logic_components_list.push_back(e);
-    sf::Mouse mouse;
-    for (int i = 0; i < basic_logic_components_list.size(); i++)
-    {
-        logic_component = &basic_logic_components_list[i];
-        
-    }
-    int mouse_x = mouse.getPosition().x;
-    int mouse_y = mouse.getPosition().y;
+    
+    return 0;
+}
+
+int start()
+{
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Logic Simulator");
+    window.setFramerateLimit(100);
+    //
+    sf::Texture background_t;
+    sf::Sprite background;
+    background_t.loadFromFile("Assets/background.png");
+    background.setTexture(background_t);
+    //
+    sf::Texture button_t,button_on_t;
+    sf::Sprite button1,button2,button3,button_on;
+    button_t.loadFromFile("Assets/start/button.png");
+    button_on_t.loadFromFile("Assets/start/button_presed.png");
+    button1.setTexture(button_t);
+    button2.setTexture(button_t);
+    button3.setTexture(button_t);
+    button_on.setTexture(button_on_t);
+    button1.setPosition(sf::Vector2f(120, 130));
+    button2.setPosition(sf::Vector2f(120, 260));
+    button3.setPosition(sf::Vector2f(120, 390));
+    button_on.setPosition(sf::Vector2f(-1000, -1000));
+    //
+    sf::Texture name_t;
+    sf::Sprite name;
+    name_t.loadFromFile("Assets/start/name.png");
+    name.setTexture(name_t);
+    name.setPosition(sf::Vector2f(170, 60));
+    //
+    sf::Texture button1_text_t, button2_text_t, button3_text_t;
+    sf::Sprite button1_text, button2_text, button3_text;
+    button1_text_t.loadFromFile("Assets/start/new_project.png");
+    button2_text_t.loadFromFile("Assets/start/load_project.png");
+    button3_text_t.loadFromFile("Assets/start/new_structure.png");
+    button1_text.setTexture(button1_text_t);
+    button2_text.setTexture(button2_text_t);
+    button3_text.setTexture(button3_text_t);
+    button1_text.setPosition(sf::Vector2f(260, 200));
+    button2_text.setPosition(sf::Vector2f(250, 330));
+    button3_text.setPosition(sf::Vector2f(235, 460));
+   
     while (window.isOpen())
-    {
-        mouse_x = mouse.getPosition().x;
-        mouse_y = mouse.getPosition().y;
+    {	
+        sf::Mouse mouse;
+        int mouse_x = mouse.getPosition().x - window.getPosition().x;
+        int mouse_y = mouse.getPosition().y - window.getPosition().y;
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
+            {
                 window.close();
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                for (int i = 0; i < basic_logic_components_list.size(); i++)
-                {
-                    if (move_mode)
-                    {
-                        if (basic_logic_components_list[i].on_click(mouse_x, mouse_y))
-                        {
-                            logic_component = &basic_logic_components_list[i];
-                            move_active = true;
-                            i = basic_logic_components_list.size();
-                        }
-                    }
-                    else if (connect_mode)
-                    {
-                        if (basic_logic_components_list[i].output_on_click(mouse_x, mouse_y, &cable_list))
-                        {
-                            connect_active = true;
-                            wire = &cable_list[cable_list.size() - 1];
-                            i = basic_logic_components_list.size();
-                        }
-                    }
-                    
-                }
-                if (mouse_x > 1000 && mouse_x < 1035 && mouse_y < 35)
-                {
-                    tough_mode = true;
-                    move_mode = false;
-                    connect_mode = false;
-                    trash_mode = false;
-                }
-                else if (mouse_x > 1050 && mouse_x < 1085 && mouse_y < 35)
-                {
-                    tough_mode = false;
-                    move_mode = true;
-                    connect_mode = false;
-                    trash_mode = false;
-                }
-                else if (mouse_x > 1100 && mouse_x < 1135 && mouse_y < 35)
-                {
-                    tough_mode = false;
-                    move_mode = false;
-                    connect_mode = true;
-                    trash_mode = false;
-                }
-                else if (mouse_x > 1150 && mouse_x < 1185 && mouse_y < 35)
-                {
-                    tough_mode = false;
-                    move_mode = false;
-                    connect_mode = false;
-                    trash_mode = true;
-                }
+                exit(0);
+            }
 
-            }
-            if (event.type == sf::Event::MouseButtonReleased)
+            else if (event.type == sf::Event::MouseButtonPressed)
             {
-                move_active = false;
-                if (connect_active)
+                if (mouse_x > 170 && mouse_x < 630)
                 {
-                    for (int i = 0; i < basic_logic_components_list.size(); i++)
-                    {
-                        if (basic_logic_components_list[i].input1_on_click(mouse_x, mouse_y) && !basic_logic_components_list[i].input1_connect)
-                        {
-                            wire->x_out_pos = mouse_x;
-                            wire->y_out_pos = mouse_y;
-                            wire->out = &basic_logic_components_list[i];
-                            basic_logic_components_list[i].input1_active = wire->on;
-                            basic_logic_components_list[i].input1_connect = true;
-                            basic_logic_components_list[i].output();
-                            basic_logic_components_list[i].output_list.push_back(wire);
-                            connect_active = false;
-                        }
-                        else  if (basic_logic_components_list[i].input2_on_click(mouse_x, mouse_y) && !basic_logic_components_list[i].input2_connect)
-                        {
-                            wire->x_out_pos = mouse_x;
-                            wire->y_out_pos = mouse_y;
-                            wire->out = &basic_logic_components_list[i];
-                            basic_logic_components_list[i].input2_active = wire->on;
-                            basic_logic_components_list[i].input2_connect = true;
-                            basic_logic_components_list[i].output();
-                            basic_logic_components_list[i].output_list.push_back(wire);
-                            connect_active = false;
-                        }
-                 
-                    }
-                    if (connect_active)
-                    {
-                        wire = {};
-                        cable_list.pop_back();
-                    }
+                    if (mouse_y > 210 && mouse_y < 310)
+                        return 1;
+                    else  if (mouse_y > 340 && mouse_y < 435)
+                        return 2;
+                    else  if (mouse_y > 450 && mouse_y < 570)
+                        return 3;
                 }
-                connect_active = false;
             }
+            
         }
-        if (move_active)
+       
+        if (mouse_x > 170 && mouse_x < 630)
         {
-            logic_component->move(mouse_x, mouse_y);
+           if (mouse_y > 210 && mouse_y < 310)
+               button_on.setPosition(sf::Vector2f(120, 130));
+           else  if (mouse_y > 340 && mouse_y < 435)
+               button_on.setPosition(sf::Vector2f(120, 260));
+           else  if (mouse_y > 450 && mouse_y < 570)
+               button_on.setPosition(sf::Vector2f(120, 390));
+           else
+               button_on.setPosition(sf::Vector2f(-1000, -1000));
         }
+        else 
+            button_on.setPosition(sf::Vector2f(-1000, -1000));
         window.clear();
         window.draw(background);
-        if (connect_active)
+        window.draw(name);
+        window.draw(button1);
+        window.draw(button2);
+        window.draw(button3);
+        window.draw(button_on);
+        window.draw(button1_text);
+        window.draw(button2_text);
+        window.draw(button3_text);
+        window.display();
+    }
+}
+
+std::string new_project()
+{
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Logic Simulator");
+    window.setFramerateLimit(100);
+    //
+    sf::Texture background_t;
+    sf::Sprite background;
+    background_t.loadFromFile("Assets/background.png");
+    background.setTexture(background_t);
+    //
+    sf::Font font;
+    if (!font.loadFromFile("Assets/arial.ttf"))
+    {
+        error("LOL");
+    }
+    std::string name_str = "";
+    sf::Text name;
+    name.setFont(font);
+    name.setString(name_str);
+    name.setCharacterSize(24);
+    name.setFillColor(sf::Color::Black);
+    name.setPosition(sf::Vector2f(100, 100));
+
+    sf::RectangleShape rectangle;
+    rectangle.setSize(sf::Vector2f(600, 200));
+    rectangle.setFillColor(sf::Color::Color(100,100,100,255));
+    rectangle.setPosition(100, 100);
+    sf::RectangleShape go;
+    go.setSize(sf::Vector2f(50, 50));
+    go.setFillColor(sf::Color::Color(100, 100, 100, 255));
+    go.setPosition(700, 500);
+
+    while (window.isOpen())
+    {
+        sf::Mouse mouse;
+        int mouse_x = mouse.getPosition().x - window.getPosition().x;
+        int mouse_y = mouse.getPosition().y - window.getPosition().y;
+        sf::Event event;
+        while (window.pollEvent(event))
         {
-            sf::RectangleShape rec;
-            rec.setPosition(sf::Vector2f(wire->x_in_pos, wire->y_in_pos));
-            rec.setSize(sf::Vector2f(sqrt(pow(wire->x_in_pos - mouse_x, 2) + pow(wire->y_in_pos - mouse_y, 2)),5));
-            if (!wire->on)
-                rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
-            else
-                rec.setFillColor(sf::Color::Green);
-            if (mouse_x - wire->x_in_pos != 0)
+            if (event.type == sf::Event::Closed)
             {
-                if (mouse_x - wire->x_in_pos > 0)
-                rec.setRotation(atan(float(mouse_y - wire->y_in_pos) / float(mouse_x - wire->x_in_pos)) * 180 / 3.1415);
-                else 
-                    rec.setRotation(180 + atan(float(mouse_y - wire->y_in_pos) / float(mouse_x - wire->x_in_pos)) * 180 / 3.1415);
+                window.close();
+                return "";
             }
-            else
+            else if (event.type == sf::Event::TextEntered)
             {
-                if (wire->y_in_pos > mouse_y)
-                    rec.rotate(-90);
-                else
-                    rec.rotate(90);
-            }
-            for (int i = 0; i < cable_list.size() - 1; i++)
-            {
-                cable_list[i].draw_cable(&window);
-            }
-            window.draw(rec);
-        }
-        else
-        {
-            for (int i = 0; i < cable_list.size(); i++)
+                if ((isalpha(event.text.unicode) || isdigit(event.text.unicode) || event.text.unicode == '_') && name_str.length() <= 30)
                 {
-                    cable_list[i].draw_cable(&window);
+                    name_str += event.text.unicode;
+                    name.setString(name_str);
+                }
+            }
+            else if (event.type == sf::Event::KeyPressed)
+            {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace))
+                {
+                    name_str.pop_back();
+                    name.setString(name_str);
+                }
+            }
+            else if (event.type == sf::Event::MouseButtonPressed)
+                if (mouse_x > 700 && mouse_x < 750 && mouse_y > 500 && mouse_y < 550)
+                {
+                    window.close();
+                    return name_str;
                 }
         }
 
+       
+        window.clear();
+        window.draw(background);
+        window.draw(rectangle);
+        window.draw(go);
+        window.draw(name);
+        window.display();
 
-        window.draw(header);
-        window.draw(touch);
-        window.draw(edit);
-        window.draw(connect);
-        window.draw(trash);
-        window.draw(button);
-        for (int i = 0; i < basic_logic_components_list.size(); i++)
+    }
+}
+
+void simulation(std::string file_name)
+{
+    sf::RenderWindow window(sf::VideoMode().getDesktopMode(), "Logic Simulator", sf::Style::None);
+    //window.setIcon();
+    window.setFramerateLimit(100);
+    Background background(window.getSize().x, window.getSize().y);
+    Header header(window.getSize().x);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
         {
-            basic_logic_components_list[i].draw(&window);
+            if (event.type == sf::Event::Closed)
+            {
+                window.close();
+            }
+            else if (event.type == sf::Event::KeyPressed)
+            {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                    background.move(100, 0);
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                    background.move(0, 100);
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                    background.move(-100, 0);
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                    background.move(0, -100);
+            }
         }
+
+        window.clear();
+        background.draw(&window);
+        header.draw(&window);
         window.display();
     }
 
+}
 
-    return 0;
+void error(std::string err)
+{
+    std::cout << err;
+    exit(-1);
 }
