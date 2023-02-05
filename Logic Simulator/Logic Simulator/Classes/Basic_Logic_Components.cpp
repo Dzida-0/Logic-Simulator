@@ -1,5 +1,5 @@
 #include "Basic_Logic_Components.h"
-
+#include <iostream>
 Basic_Logic_Components::Basic_Logic_Components()
 {
     in_1.setFillColor(sf::Color::Color(255, 255, 255, 100));
@@ -11,7 +11,8 @@ void Basic_Logic_Components::create(int x, int y)
 {
     x_pos = x;
     y_pos = y;
-    texture.loadFromFile(png_name);
+    if (!texture.loadFromFile(png_name))
+        std::cout << "f";
     sprite.setTexture(texture);
     sprite.setScale(sf::Vector2f(scale, scale));
     sprite.setPosition(sf::Vector2f(x_pos, y_pos));
@@ -95,15 +96,15 @@ void Basic_Logic_Components::output()
         else
             in_2.setFillColor(sf::Color::Color(255, 255, 255, 100));
         action_in_sequence = true;
-        for (int i = 0; i < output_list.size(); i++)
+        /*for (int i = 0; i < output_list.size(); i++)
         {
-            std::cout << "aaa" << std::endl;
+            
             output_list[i]->on = output_active;
-            std::cout << "bbb" << std::endl;
+            
             output_list[i]->output();
-            std::cout << "ccc" << std::endl;
+            
 
-        }
+        }*/
 
     }
 }

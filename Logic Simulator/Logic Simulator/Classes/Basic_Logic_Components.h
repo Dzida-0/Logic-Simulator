@@ -3,6 +3,8 @@
 #include "SFML/Graphics.hpp"
 #include "Connection_Wires.h"
 
+class Connection_Wires;
+
 class Basic_Logic_Components {
 public:
     Basic_Logic_Components();

@@ -1,9 +1,11 @@
 #pragma once
 #include "Basic_Logic_Components.h"
 
+class Basic_Logic_Components;
+
 class Connection_Wires{
 public:
-    Basic_Logic_Components * out{};
+    Basic_Logic_Components* out{};
     int x_in_pos = 0;
     int y_in_pos = 0;
     int x_out_pos = 0;

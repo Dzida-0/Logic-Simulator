@@ -33,6 +33,9 @@
     <ClCompile Include="Classes\Basic_Logic_Gates.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Add.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Header.h">
@@ -41,13 +44,16 @@
     <ClInclude Include="Classes\Background.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Basic_Logic_Components.h">
+    <ClInclude Include="Classes\Basic_Logic_Gates.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="Classes\Connection_Wires.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\Basic_Logic_Gates.h">
+    <ClInclude Include="Classes\Basic_Logic_Components.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Add.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

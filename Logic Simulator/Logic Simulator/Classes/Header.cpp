@@ -1,12 +1,27 @@
 #include "Header.h"
 
-Header::Header(int x)
+Header::Header(int x,bool *add_on_p)
 {
+    add_on = add_on_p;
+    size = x;
     bar.setSize(sf::Vector2f(x, 50));
     bar_bottom.setSize(sf::Vector2f(x, 5));
     bar.setFillColor(sf::Color::Color(180, 180, 180, 255));
     bar_bottom.setFillColor(sf::Color::Color(240, 240, 240, 255));
     bar_bottom.setPosition(sf::Vector2f(0, 45));
+    //
+    bar_touch.setSize(sf::Vector2f(50, 6));
+    bar_touch.setPosition(sf::Vector2f(x * 0.6, 44));
+    bar_touch.setFillColor(sf::Color::Color(0,0,0, 255));
+    bar_edit.setSize(sf::Vector2f(50, 6));
+    bar_edit.setPosition(sf::Vector2f(x * 0.6 + 70, 44));
+    bar_edit.setFillColor(sf::Color::Color(0, 0, 0, 255));
+    bar_connect.setSize(sf::Vector2f(50, 6));
+    bar_connect.setPosition(sf::Vector2f(x * 0.6 + 140, 44));
+    bar_connect.setFillColor(sf::Color::Color(0, 0, 0, 255));
+    bar_trash.setSize(sf::Vector2f(50, 6));
+    bar_trash.setPosition(sf::Vector2f(x * 0.6 + 210, 44));
+    bar_trash.setFillColor(sf::Color::Color(0, 0, 0, 255));
     //
     if (!back_t.loadFromFile("Assets/header/back.png"))
         throw std::invalid_argument("File Not Find Assets/header/back.png");
@@ -73,6 +88,12 @@ Header::Header(int x)
     trash_inact.setTexture(trash_inact_t);
     trash_inact.setPosition(sf::Vector2f(x * 0.6 + 210, 5));
     trash_inact.setScale(sf::Vector2f(0.07, 0.07));
+    //
+    if (!add_t.loadFromFile("Assets/header/add.png"))
+        throw std::invalid_argument("File Not Find Assets/header/add.png");
+    add.setTexture(add_t);
+    add.setPosition(sf::Vector2f(x * 0.8, 4));
+    add.setScale(sf::Vector2f(0.05, 0.05));
 }
 
 void Header::draw(sf::RenderWindow* window)
@@ -94,6 +115,62 @@ void Header::draw(sf::RenderWindow* window)
         window->draw(connect_inact);
         window->draw(trash_inact);
     }
+    if (move_bool)
+        window->draw(add);
     window->draw(touch);
+
     window->draw(bar_bottom);
+    if (press_bool)
+        window->draw(bar_touch);
+    else if (move_bool)
+        window->draw(bar_edit);
+    else if (connect_bool)
+        window->draw(bar_connect);
+    else if (trash_bool)
+        window->draw(bar_trash);
 }
+
+void Header::press(int x)
+{
+    if (x > size * 0.6 && x < size * 0.6 + 50)
+    {
+        press_bool = true;
+        move_bool = false;
+        connect_bool = false;
+        trash_bool = false;
+        *add_on = false;
+    }
+    else if (x > size * 0.6 + 70 && x < size * 0.6 + 120)
+    {
+        press_bool = false;
+        move_bool = true;
+        connect_bool = false;
+        trash_bool = false;
+        *add_on = false;
+    }
+    else if (x > size * 0.6 + 140 && x < size * 0.6 + 190)
+    {
+        press_bool = false;
+        move_bool = false;
+        connect_bool = true;
+        trash_bool = false;
+        *add_on = false;
+    }
+    else if (x > size * 0.6 + 210 && x < size * 0.6 + 280)
+    {
+        press_bool = false;
+        move_bool = false;
+        connect_bool = false;
+        trash_bool = true;
+        *add_on = false;
+    }
+    else if (x > size * 0.8 && x < size * 0.8 + 50 && move_bool)
+    {
+        if (*add_on)
+            *add_on = false;
+        else
+            *add_on = true;
+    }
+    
+}
+
