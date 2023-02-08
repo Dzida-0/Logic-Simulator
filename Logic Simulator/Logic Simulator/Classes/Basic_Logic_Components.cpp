@@ -1,10 +1,11 @@
 #include "Basic_Logic_Components.h"
 #include <iostream>
+
 Basic_Logic_Components::Basic_Logic_Components()
 {
-    in_1.setFillColor(sf::Color::Color(255, 255, 255, 100));
-    in_2.setFillColor(sf::Color::Color(255, 255, 255, 100));
-    out.setFillColor(sf::Color::Color(255, 255, 255, 100));
+    in_1.setFillColor(sf::Color::Color(255, 255, 255, 255));
+    in_2.setFillColor(sf::Color::Color(255, 255, 255, 255));
+    out.setFillColor(sf::Color::Color(255, 255, 255, 255));
 }
 
 void Basic_Logic_Components::create(int x, int y)
@@ -27,15 +28,18 @@ void Basic_Logic_Components::create(int x, int y)
 
 void Basic_Logic_Components::move(int x, int y)
 {
-    if (x - width / 2 > 10 && y - height / 2 > 20)
+    x_pos = x - width / 2;
+    y_pos = y - height / 2;
+    sprite.setPosition(sf::Vector2f(x_pos, y_pos));
+    in_1.setPosition(x_pos - width / 3 * scale, y_pos + height / 5 * scale);
+    in_2.setPosition(x_pos - width / 3 * scale, y_pos + height * 2 / 3 * scale);
+    out.setPosition(x_pos + width * 1.2 * scale, y_pos + height * 2 / 5 * scale);
+    for (int i = 0; i < output_list.size(); i++)
     {
-        x_pos = x - width / 2;
-        y_pos = y - height / 2;
-        sprite.setPosition(sf::Vector2f(x_pos, y_pos));
-        in_1.setPosition(x_pos - width / 3 * scale, y_pos + height / 5 * scale);
-        in_2.setPosition(x_pos - width / 3 * scale, y_pos + height * 2 / 3 * scale);
-        out.setPosition(x_pos + width * 1.2 * scale, y_pos + height * 2 / 5 * scale);
+        output_list[i]->x_in_pos = x_pos + width * 1.2 * scale;
+        output_list[i]->y_in_pos = y_pos + height * 2 / 5 * scale;
     }
+
 }
 
 bool Basic_Logic_Components::on_click(int x, int y)
@@ -54,18 +58,9 @@ bool Basic_Logic_Components::input2_on_click(int x, int y)
 }
 
 
-bool Basic_Logic_Components::output_on_click(int x, int y, std::vector<Connection_Wires>* vector)
+bool Basic_Logic_Components::output_on_click(int x, int y)
 {
-    if (sqrt(pow((x_pos + width * 1.2 * scale) - x, 2) + pow((y_pos + height * 2 / 5 * scale) - y, 2)) <= 3 * 15.0f * scale)
-    {
-        Connection_Wires wire;
-        wire.x_in_pos = x_pos + width * 1.2 * scale + 15.0f * scale / 2;
-        wire.y_in_pos = y_pos + height * 2 / 5 * scale + 15.0f * scale / 2;
-        wire.input(output_active);
-        vector->push_back(wire);
-        return true;
-    }
-    return false;
+    return bool(sqrt(pow((x_pos + width * 1.2 * scale) - x, 2) + pow((y_pos + height * 2 / 5 * scale) - y, 2)) <= 3 * 15.0f * scale);
 }
 
 void Basic_Logic_Components::draw(sf::RenderWindow* window)
@@ -78,33 +73,33 @@ void Basic_Logic_Components::draw(sf::RenderWindow* window)
 
 void Basic_Logic_Components::output()
 {
-    if (!action_in_sequence)
+
+
+    output_active = logic_value_tab[input1_active][input2_active];
+    if (output_active)
+        out.setFillColor(sf::Color::Green);
+    else
+        out.setFillColor(sf::Color::Color(255, 255, 255, 255));
+
+    if (input1_active)
+        in_1.setFillColor(sf::Color::Green);
+    else
+        in_1.setFillColor(sf::Color::Color(255, 255, 255, 255));
+
+    if (input2_active)
+        in_2.setFillColor(sf::Color::Green);
+    else
+        in_2.setFillColor(sf::Color::Color(255, 255, 255, 255));
+
+    for (int i = 0; i < output_list.size(); i++)
     {
-        output_active = logic_value_tab[input1_active][input2_active];
-        if (output_active)
-            out.setFillColor(sf::Color::Green);
-        else
-            out.setFillColor(sf::Color::Color(255, 255, 255, 100));
 
-        if (input1_active)
-            in_1.setFillColor(sf::Color::Green);
-        else
-            in_1.setFillColor(sf::Color::Color(255, 255, 255, 100));
+        output_list[i]->on = output_active;
 
-        if (input2_active)
-            in_2.setFillColor(sf::Color::Green);
-        else
-            in_2.setFillColor(sf::Color::Color(255, 255, 255, 100));
-        action_in_sequence = true;
-        /*for (int i = 0; i < output_list.size(); i++)
-        {
-            
-            output_list[i]->on = output_active;
-            
-            output_list[i]->output();
-            
+        output_list[i]->output();
 
-        }*/
 
     }
+
+
 }

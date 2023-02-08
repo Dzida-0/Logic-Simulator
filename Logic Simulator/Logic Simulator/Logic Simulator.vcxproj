@@ -151,21 +151,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Add.cpp" />
     <ClCompile Include="Classes\Basic_Logic_Gates.cpp" />
     <ClCompile Include="Classes\Basic_Logic_Components.cpp" />
     <ClCompile Include="Classes\Background.cpp" />
     <ClCompile Include="Classes\Header.cpp" />
     <ClCompile Include="Classes\Connection_Wires.cpp" />
+    <ClCompile Include="Classes\Led.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Classes\Button.h" />
     <ClInclude Include="Classes\Add.h" />
     <ClInclude Include="Classes\Basic_Logic_Components.h" />
     <ClInclude Include="Classes\Basic_Logic_Gates.h" />
     <ClInclude Include="Classes\Background.h" />
     <ClInclude Include="Classes\Connection_Wires.h" />
     <ClInclude Include="Classes\Header.h" />
+    <ClInclude Include="Classes\Led.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-audio-2.dll" />

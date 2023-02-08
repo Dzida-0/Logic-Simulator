@@ -60,6 +60,3 @@ XNOR::XNOR()
     output();
 
 }
-
-
-

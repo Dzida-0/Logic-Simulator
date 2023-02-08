@@ -33,3 +33,7 @@ public:
     XNOR();
 };
 
+class LED : public Basic_Logic_Components {
+public:
+    LED();
+};

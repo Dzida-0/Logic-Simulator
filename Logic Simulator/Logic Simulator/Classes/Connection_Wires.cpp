@@ -1,62 +1,91 @@
 #include "Connection_Wires.h"
 
-void Connection_Wires::input(bool active)
-{
-    on = active;
-    if (connected)
-        output_created();
-}
-
-void Connection_Wires::output_created()
-{
-
-}
-
-void Connection_Wires::input_move(int x, int y)
+void Connection_Wires::create(int x, int y, Basic_Logic_Components* in_logic, Button* in_button)
 {
     x_in_pos = x;
     y_in_pos = y;
+    if (in_logic == NULL)
+    {
+        input_button = in_button;
+        input_button_bool = true;
+    }
+    else
+        input_basic = in_logic;
 }
 
 void Connection_Wires::output()
 {
-    out->output_active = on;
-    out->output();
+    if (!output_led)
+    {
+        if (input_number == 1)
+            out_basic->input1_active = on;
+        else  if (input_number == 2)
+            out_basic->input2_active = on;
+        out_basic->output();
+    }
+    else
+    {
+        out_led->input_active = on;
+        out_led->connected();
+    }
+}
+
+void Connection_Wires::output_move()
+{
+    if (!output_led)
+    {
+        if (input_number == 1)
+            y_out_pos = out_basic->y_pos + out_basic->height / 5 * out_basic->scale;
+        if (input_number == 2)
+            y_out_pos = out_basic->y_pos + out_basic->height * 2/3 * out_basic->scale;
+        x_out_pos = out_basic->x_pos - out_basic->width / 3 * out_basic->scale;
+        
+    }
+    else
+    {
+       x_out_pos = out_led->x_pos - out_led->width / 3 * out_led->scale;
+       y_out_pos = out_led->y_pos + out_led->height / 3 * out_led->scale;
+    }
+}
+
+void Connection_Wires::create_output(int num, Basic_Logic_Components* out_logic, Led* out_led_pass)
+{
+    input_number = num;
+    
+    if (out_logic != NULL)
+        out_basic = out_logic;
+    else if (out_led_pass != NULL)
+    {
+        out_led = out_led_pass;
+        output_led = true;
+    }
+    connected = true;
+
 }
 
 void Connection_Wires::draw_cable(sf::RenderWindow* window)
 {
-    if (!straight_line)
+    sf::RectangleShape rec;
+    rec.setPosition(sf::Vector2f(x_in_pos, y_in_pos));
+    rec.setSize(sf::Vector2f(sqrt(pow(x_in_pos - x_out_pos, 2) + pow(y_in_pos - y_out_pos, 2)), 5));
+    if (!on)
+        rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
+    else
+        rec.setFillColor(sf::Color::Green);
+    if (x_out_pos - x_in_pos != 0)
     {
-        sf::RectangleShape rec;
-        rec.setPosition(sf::Vector2f(x_in_pos, y_in_pos));
-        rec.setSize(sf::Vector2f(sqrt(pow(x_in_pos - x_out_pos, 2) + pow(y_in_pos - y_out_pos, 2)), 5));
-        if (!on)
-            rec.setFillColor(sf::Color::Color(255, 255, 255, 100));
+        if (x_out_pos - x_in_pos > 0)
+            rec.setRotation(atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
         else
-            rec.setFillColor(sf::Color::Green);
-        if (x_out_pos - x_in_pos != 0)
-        {
-            if (x_out_pos - x_in_pos > 0)
-                rec.setRotation(atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
-            else
-                rec.setRotation(180 + atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
-        }
-        else
-        {
-            if (y_in_pos > y_out_pos)
-                rec.rotate(-90);
-            else
-                rec.rotate(90);
-        }
-        window->draw(rec);
+            rec.setRotation(180 + atan(float(y_out_pos - y_in_pos) / float(x_out_pos - x_in_pos)) * 180 / 3.1415);
     }
     else
     {
-        sf::RectangleShape rec[3];
-        if (abs(x_in_pos - x_out_pos) > abs(y_in_pos - y_out_pos))
-        {
-
-        }
+        if (y_in_pos > y_out_pos)
+            rec.rotate(-90);
+        else
+            rec.rotate(90);
     }
+    window->draw(rec);
+
 }

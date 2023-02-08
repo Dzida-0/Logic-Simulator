@@ -1,6 +1,6 @@
 #include "Header.h"
 
-Header::Header(int x,bool *add_on_p)
+Header::Header(int x, bool* add_on_p)
 {
     add_on = add_on_p;
     size = x;
@@ -11,16 +11,16 @@ Header::Header(int x,bool *add_on_p)
     bar_bottom.setPosition(sf::Vector2f(0, 45));
     //
     bar_touch.setSize(sf::Vector2f(50, 6));
-    bar_touch.setPosition(sf::Vector2f(x * 0.6, 44));
-    bar_touch.setFillColor(sf::Color::Color(0,0,0, 255));
+    bar_touch.setPosition(sf::Vector2f(x * 0.6 - 10, 44));
+    bar_touch.setFillColor(sf::Color::Color(0, 0, 0, 255));
     bar_edit.setSize(sf::Vector2f(50, 6));
-    bar_edit.setPosition(sf::Vector2f(x * 0.6 + 70, 44));
+    bar_edit.setPosition(sf::Vector2f(x * 0.6 + 63, 44));
     bar_edit.setFillColor(sf::Color::Color(0, 0, 0, 255));
     bar_connect.setSize(sf::Vector2f(50, 6));
-    bar_connect.setPosition(sf::Vector2f(x * 0.6 + 140, 44));
+    bar_connect.setPosition(sf::Vector2f(x * 0.6 + 135, 44));
     bar_connect.setFillColor(sf::Color::Color(0, 0, 0, 255));
     bar_trash.setSize(sf::Vector2f(50, 6));
-    bar_trash.setPosition(sf::Vector2f(x * 0.6 + 210, 44));
+    bar_trash.setPosition(sf::Vector2f(x * 0.6 + 205, 44));
     bar_trash.setFillColor(sf::Color::Color(0, 0, 0, 255));
     //
     if (!back_t.loadFromFile("Assets/header/back.png"))
@@ -50,26 +50,26 @@ Header::Header(int x,bool *add_on_p)
     if (!touch_t.loadFromFile("Assets/header/touch.png"))
         throw std::invalid_argument("File Not Find Assets/header/touch.png");
     touch.setTexture(touch_t);
-    touch.setPosition(sf::Vector2f(x*0.6, 5));
+    touch.setPosition(sf::Vector2f(x * 0.6, 5));
     touch.setScale(sf::Vector2f(0.07, 0.07));
     //
     if (!edit_t.loadFromFile("Assets/header/edit.png"))
         throw std::invalid_argument("File Not Find Assets/header/edit.png");
     edit.setTexture(edit_t);
-    edit.setPosition(sf::Vector2f(x * 0.6+70, 5));
+    edit.setPosition(sf::Vector2f(x * 0.6 + 70, 5));
     edit.setScale(sf::Vector2f(0.07, 0.07));
     //
     if (!edit_inact_t.loadFromFile("Assets/header/edit_inact.png"))
         throw std::invalid_argument("File Not Find Assets/header/edit_inact.png");
     edit_inact.setTexture(edit_inact_t);
-    edit_inact.setPosition(sf::Vector2f(x * 0.6+70, 5));
+    edit_inact.setPosition(sf::Vector2f(x * 0.6 + 70, 5));
     edit_inact.setScale(sf::Vector2f(0.07, 0.07));
     //
     if (!connect_t.loadFromFile("Assets/header/connect.png"))
         throw std::invalid_argument("File Not Find Assets/header/connect.png");
     connect.setTexture(connect_t);
     connect.setPosition(sf::Vector2f(x * 0.6 + 140, 5));
-    connect.setScale(sf::Vector2f(0.05, 0.05));
+    connect.setScale(sf::Vector2f(0.04, 0.04));
     //
     if (!connect_inact_t.loadFromFile("Assets/header/connect_inact.png"))
         throw std::invalid_argument("File Not Find Assets/header/connect_inact.png");
@@ -99,22 +99,12 @@ Header::Header(int x,bool *add_on_p)
 void Header::draw(sf::RenderWindow* window)
 {
     window->draw(bar);
-    if (!play_bool)
-    {
-        window->draw(save);
-        window->draw(back);
-        window->draw(edit);
-        window->draw(connect);
-        window->draw(trash);
-    }
-    else
-    {
-        window->draw(save_inact);
-        window->draw(back_inact);
-        window->draw(edit_inact);
-        window->draw(connect_inact);
-        window->draw(trash_inact);
-    }
+    window->draw(save);
+    window->draw(back);
+    window->draw(edit);
+    window->draw(connect);
+    window->draw(trash);
+
     if (move_bool)
         window->draw(add);
     window->draw(touch);
@@ -171,6 +161,6 @@ void Header::press(int x)
         else
             *add_on = true;
     }
-    
+
 }
 

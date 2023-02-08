@@ -3,16 +3,15 @@
 #include "Add.h"
 
 class Header
-{	
+{
 public:
-	bool play_bool = false;
 	bool press_bool = true;
 	bool move_bool = false;
 	bool connect_bool = false;
 	bool trash_bool = false;
 	int size;
-	bool *add_on;
-	Header(int x,bool *add_on_p);
+	bool* add_on;
+	Header(int x, bool* add_on_p);
 	void draw(sf::RenderWindow* window);
 	void press(int x);
 
