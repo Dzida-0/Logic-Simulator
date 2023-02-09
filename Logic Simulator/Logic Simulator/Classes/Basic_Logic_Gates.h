@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Basic_Logic_Components.h"
 
-
+// klasy poszczególych bramek
 class OR : public Basic_Logic_Components {
 public:
     OR();
@@ -33,7 +33,3 @@ public:
     XNOR();
 };
 
-class LED : public Basic_Logic_Components {
-public:
-    LED();
-};

@@ -5,7 +5,7 @@
 #include "Button.h"
 #include "Led.h"
 
-struct Add
+struct Add // klasa dodawania nowych elementów
 {
 private:
 	std::vector<sf::Sprite> list;

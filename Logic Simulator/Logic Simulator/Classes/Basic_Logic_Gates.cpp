@@ -1,5 +1,5 @@
 #include "Basic_Logic_Gates.h"
-
+// ka¿dy konstruktor zawiera scieszkê do tekstury i tablicê wartoœci logicznych in out
 OR::OR()
 {
     png_name = "Assets/OR.png";

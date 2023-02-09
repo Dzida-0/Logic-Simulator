@@ -3,12 +3,12 @@
 #include "SFML/Graphics.hpp"
 #include "Connection_Wires.h"
 
-class Connection_Wires;
+class Connection_Wires; // klasa odpowiedzialna za dzia³¹nie ledów 
 
 class Led {
 public:
     Led();
-    Connection_Wires* input_wire;
+    Connection_Wires* input_wire; 
     int id;
 
     int x_pos = 0;

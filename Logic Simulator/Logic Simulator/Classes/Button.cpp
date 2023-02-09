@@ -1,29 +1,28 @@
 #include "Button.h"
-#include <iostream>
 
 Button::Button()
 {
     out.setFillColor(sf::Color::Color(255, 255, 255, 255));
 }
 
-void Button::create(int x, int y, bool hold_in)
+void Button::create(int x, int y, bool hold_in)// tekstury i pozycja 
 {
     x_pos = x;
     y_pos = y;
-    hold = hold_in;
+    hold = hold_in; // hold = true dla prze³¹czników on/off
     if (hold)
     {
         if (!texture_on.loadFromFile("Assets/button_on.png"))
-            std::cout << "f";
+            throw std::invalid_argument("File Not Find Assets/button_on.png");
         if (!texture_off.loadFromFile("Assets/button_off.png"))
-            std::cout << "f";
+            throw std::invalid_argument("File Not Find Assets/button_off.png");
     }
     else
     {
         if (!texture_on.loadFromFile("Assets/button_press_on.png"))
-            std::cout << "f";
+            throw std::invalid_argument("File Not Find Assets/button_press_on.png");
         if (!texture_off.loadFromFile("Assets/button_press_off.png"))
-            std::cout << "f";
+            throw std::invalid_argument("File Not Find Assetsbutton_press_off.png");
     }
     sprite_on.setTexture(texture_on);
     sprite_off.setTexture(texture_off);
@@ -36,7 +35,7 @@ void Button::create(int x, int y, bool hold_in)
 
 }
 
-void Button::move(int x, int y)
+void Button::move(int x, int y)// porusznie 
 {
     x_pos = x - width / 2;
     y_pos = y - height / 2;
@@ -58,29 +57,24 @@ void Button::move(int x, int y)
     }
 }
 
-bool Button::on_click(int x, int y)
+bool Button::on_click(int x, int y) // czy przyciœniêty 
 {
     return bool(x_pos < x&& x < x_pos + width * scale && y_pos < y&& y < y_pos + height * scale);
 }
 
-bool Button::output_on_click(int x, int y)
+bool Button::output_on_click(int x, int y) // czy wyjœcie przyciœniête
 {
-    if (sqrt(pow((x_pos + width * 1.2 * scale) - x, 2) + pow((y_pos + height * 2 / 5 * scale) - y, 2)) <= 3 * 15.0f * scale)
-    {
-
-        return true;
-    }
-    return false;
+    return bool(sqrt(pow((x_pos + width * 1.2 * scale) - x, 2) + pow((y_pos + height * 2 / 5 * scale) - y, 2)) <= 3 * 15.0f * scale);
 }
 
-void Button::draw(sf::RenderWindow* window)
+void Button::draw(sf::RenderWindow* window) //rysowanie 
 {
     window->draw(sprite_on);
     window->draw(sprite_off);
     window->draw(out);
 }
 
-void Button::output(bool press, bool on)
+void Button::output(bool press, bool on) // wysy³anie sygna³u do przewodów
 {
     if (press)
     {

@@ -8,12 +8,12 @@ Basic_Logic_Components::Basic_Logic_Components()
     out.setFillColor(sf::Color::Color(255, 255, 255, 255));
 }
 
-void Basic_Logic_Components::create(int x, int y)
+void Basic_Logic_Components::create(int x, int y) 
 {
     x_pos = x;
     y_pos = y;
     if (!texture.loadFromFile(png_name))
-        std::cout << "f";
+        throw std::invalid_argument("File Not Find "+ png_name);
     sprite.setTexture(texture);
     sprite.setScale(sf::Vector2f(scale, scale));
     sprite.setPosition(sf::Vector2f(x_pos, y_pos));
@@ -26,7 +26,7 @@ void Basic_Logic_Components::create(int x, int y)
 
 }
 
-void Basic_Logic_Components::move(int x, int y)
+void Basic_Logic_Components::move(int x, int y) 
 {
     x_pos = x - width / 2;
     y_pos = y - height / 2;
@@ -45,6 +45,11 @@ void Basic_Logic_Components::move(int x, int y)
 bool Basic_Logic_Components::on_click(int x, int y)
 {
     return bool(x_pos < x&& x < x_pos + width * scale && y_pos < y&& y < y_pos + height * scale);
+}
+
+void Basic_Logic_Components::add_to_output(Connection_Wires* add)
+{
+    output_list.push_back(add);
 }
 
 bool Basic_Logic_Components::input1_on_click(int x, int y)

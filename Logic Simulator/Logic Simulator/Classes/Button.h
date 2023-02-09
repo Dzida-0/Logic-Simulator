@@ -5,7 +5,7 @@
 
 class Connection_Wires;
 
-class Button {
+class Button { // klasa przycisku
 public:
     Button();
 

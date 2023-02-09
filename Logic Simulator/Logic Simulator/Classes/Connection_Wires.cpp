@@ -1,19 +1,12 @@
 #include "Connection_Wires.h"
 
-void Connection_Wires::create(int x, int y, Basic_Logic_Components* in_logic, Button* in_button)
+void Connection_Wires::create(int x, int y) // pozycja wejscia 
 {
     x_in_pos = x;
     y_in_pos = y;
-    if (in_logic == NULL)
-    {
-        input_button = in_button;
-        input_button_bool = true;
-    }
-    else
-        input_basic = in_logic;
 }
 
-void Connection_Wires::output()
+void Connection_Wires::output() // wywo³ywanie dzia³¹nia na wyjœciu 
 {
     if (!output_led)
     {
@@ -30,7 +23,7 @@ void Connection_Wires::output()
     }
 }
 
-void Connection_Wires::output_move()
+void Connection_Wires::output_move() // porusznie 
 {
     if (!output_led)
     {
@@ -48,7 +41,7 @@ void Connection_Wires::output_move()
     }
 }
 
-void Connection_Wires::create_output(int num, Basic_Logic_Components* out_logic, Led* out_led_pass)
+void Connection_Wires::create_output(int num, Basic_Logic_Components* out_logic, Led* out_led_pass) // tworzenie wyjœcia 
 {
     input_number = num;
     
@@ -63,7 +56,70 @@ void Connection_Wires::create_output(int num, Basic_Logic_Components* out_logic,
 
 }
 
-void Connection_Wires::draw_cable(sf::RenderWindow* window)
+bool Connection_Wires::on_click(int x, int y) // czy naciœniêty ( funkcja wykorzystywana przy usuwaniu)
+{
+    if (x_in_pos < x_out_pos)
+    {
+        if (x > x_in_pos && x < x_out_pos)
+        {
+            if (y_in_pos > y_out_pos)
+            {
+                if (y > y_out_pos && y < y_in_pos)
+                {
+                    float a, b;
+                    a = float(y_in_pos - y_out_pos) / float(x_in_pos - x_out_pos);
+                    b = y_in_pos - a * x_in_pos;
+                    if (y > a * x + b - 3 && y < a * x + b + 3)
+                        return true;
+                }
+
+            }
+            else
+            {
+                if (y < y_out_pos && y > y_in_pos)
+                {
+                    float a, b;
+                    a = float(y_in_pos - y_out_pos) / float(x_in_pos - x_out_pos);
+                    b = y_in_pos - a * x_in_pos;
+                    if (y > a * x + b - 3 && y < a * x + b + 3)
+                        return true;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (x < x_in_pos && x > x_out_pos)
+        {
+            if (y_in_pos > y_out_pos)
+            {
+                if (y > y_out_pos && y < y_in_pos)
+                {
+                    float a, b;
+                    a = float(y_in_pos - y_out_pos) / float(x_in_pos - x_out_pos);
+                    b = y_in_pos - a * x_in_pos;
+                    if (y > a * x + b - 3 && y < a * x + b + 3)
+                        return true;
+                }
+            }
+            else
+            {
+                if (y < y_out_pos && y > y_in_pos)
+                {
+                    float a, b;
+                    a = float(y_in_pos - y_out_pos) / float(x_in_pos - x_out_pos);
+                    b = y_in_pos - a * x_in_pos;
+                    if (y > a * x + b - 3 && y < a * x + b + 3)
+                        return true;
+                }
+            }
+        }
+    }
+   
+    return false;
+}
+
+void Connection_Wires::draw_cable(sf::RenderWindow* window) // rysowanie 
 {
     sf::RectangleShape rec;
     rec.setPosition(sf::Vector2f(x_in_pos, y_in_pos));

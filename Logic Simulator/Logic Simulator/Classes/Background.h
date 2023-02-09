@@ -2,7 +2,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-class Background
+class Background // klasa t³a
 {
     std::vector<sf::Sprite> vector_background;
     sf::Sprite background;

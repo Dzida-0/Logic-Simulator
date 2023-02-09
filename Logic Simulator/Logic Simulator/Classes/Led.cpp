@@ -4,17 +4,17 @@
 
 Led::Led()
 {
-    in.setFillColor(sf::Color::Color(255, 255, 255, 255));
+    in.setFillColor(sf::Color::Color(255, 255, 255, 255)); 
 }
 
-void Led::create(int x, int y)
+void Led::create(int x, int y) // tworzenie bloczka dodawanie tekstur i pozycjonowanie 
 {
     x_pos = x;
     y_pos = y;
     if (!texture_on.loadFromFile("Assets/light_on.png"))
-        std::cout << "f";
+        throw std::invalid_argument("File Not Find Assets/light_on.png");
     if (!texture_off.loadFromFile("Assets/light_off.png"))
-        std::cout << "f";
+        throw std::invalid_argument("File Not Find Assets/light_on.png");
     sprite_on.setTexture(texture_on);
     sprite_off.setTexture(texture_off);
     sprite_on.setScale(sf::Vector2f(scale, scale));
@@ -23,11 +23,9 @@ void Led::create(int x, int y)
     sprite_off.setPosition(sf::Vector2f(x_pos, y_pos));
     in.setRadius(15.0f * scale);
     in.setPosition(x_pos - width / 3 * scale, y_pos + height / 3 * scale);
-
-
 }
 
-void Led::move(int x, int y)
+void Led::move(int x, int y) // porusznie ledów 
 {
     x_pos = x - width / 2;
     y_pos = y - height / 2;
@@ -45,7 +43,7 @@ void Led::move(int x, int y)
     in.setPosition(x_pos - width / 3 * scale, y_pos + height / 3 * scale);
 }
 
-void Led::connected()
+void Led::connected() // zapalanie i gaszenie leda 
 {
     if (input_active)
     {
@@ -61,17 +59,17 @@ void Led::connected()
     }
 }
 
-bool Led::on_click(int x, int y)
+bool Led::on_click(int x, int y) // czy naciœniêty 
 {
     return bool(x_pos < x&& x < x_pos + width * scale && y_pos < y&& y < y_pos + height * scale);
 }
 
-bool Led::input_on_click(int x, int y)
+bool Led::input_on_click(int x, int y) // czy wejœcie naciœniête 
 {
     return bool(sqrt(pow((x_pos - width / 3 * scale) - x, 2) + pow((y_pos + height / 3 * scale) - y, 2)) <= 3 * 15.0f * scale);
 }
 
-void Led::draw(sf::RenderWindow* window)
+void Led::draw(sf::RenderWindow* window) // rysowanie 
 {
     window->draw(sprite_on);
     window->draw(sprite_off);

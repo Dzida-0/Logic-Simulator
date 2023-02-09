@@ -5,7 +5,7 @@
 
 class Connection_Wires;
 
-class Basic_Logic_Components {
+class Basic_Logic_Components {// klasa grupuj¹ca wszystkie bramki logiczne 
 public:
     Basic_Logic_Components();
 
@@ -37,6 +37,7 @@ public:
     void create(int x, int y);
     void move(int x, int y);
     bool on_click(int x, int y);
+    void add_to_output(Connection_Wires* add);
     bool input1_on_click(int x, int y);
     bool input2_on_click(int x, int y);
     bool output_on_click(int x, int y);

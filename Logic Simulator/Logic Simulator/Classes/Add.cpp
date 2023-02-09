@@ -1,7 +1,7 @@
 #include "Add.h"
 #include <iostream>
 
-Add::Add(int x, std::vector<Basic_Logic_Components*>* list_in, std::vector<Led*>* list_in_led, std::vector<Button*>* list_in_button)
+Add::Add(int x, std::vector<Basic_Logic_Components*>* list_in, std::vector<Led*>* list_in_led, std::vector<Button*>* list_in_button) // ³¹doawnie wszytkich tekstur
 {
 	list_gates = list_in;
 	list_led = list_in_led;
@@ -93,7 +93,7 @@ void Add::draw(sf::RenderWindow* window)
 	}
 }
 
-void Add::move_list(int x)
+void Add::move_list(int x) // porusznie list elemnetów  
 {
 	on += x;
 	if (on == 0)
@@ -102,7 +102,7 @@ void Add::move_list(int x)
 		on--;
 }
 
-void Add::press(int x, int y)
+void Add::press(int x, int y) // tworzenie nowych elemnetów 
 {
 	if (x > window_size * 0.8 && x < window_size * 0.8 + 100)
 	{
